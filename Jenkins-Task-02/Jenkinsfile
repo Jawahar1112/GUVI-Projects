@@ -21,7 +21,7 @@ pipeline {
   post {
     success {
       emailext(
-        to: 'jawaharjawa1112@gmail.com.com',
+        to: 'jawaharjawa1112@gmail.com',
         subject: "✅ Build #${BUILD_NUMBER} Successful",
         body: "Jenkins build completed successfully.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
         attachLog: true
@@ -29,7 +29,7 @@ pipeline {
     }
     failure {
       emailext(
-        to: 'jawaharjawa1112@gmail.com.com',
+        to: 'jawaharjawa1112@gmail.com',
         subject: "❌ Build #${BUILD_NUMBER} Failed",
         body: "Jenkins build failed.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
         attachLog: true
