@@ -2,51 +2,37 @@ cat > Jenkinsfile << 'EOF'
 pipeline {
   agent any
 
-  environment {
-    GIT_CREDS   = 'github-creds'       
-    SMTP_CREDS  = 'smtp-creds'         
-    RECIPIENT   = 'jawaharjawa1112@gmail.com'    
-  }
-
   stages {
-    stage('Checkout') {
-      steps {
-        echo '🔄 Checking out code...'
-        git url: 'git@github.com:Jawahar1112/GUVI.git',  
-            credentialsId: "${GIT_CREDS}"
-      }
-    }
-
     stage('Build') {
       steps {
-        echo '⚙️ Running build.sh...'
+        echo 'Running build.sh'
         sh 'chmod +x build.sh'
         sh './build.sh'
       }
     }
 
-    stage('Archive') {
+    stage('Archive Output') {
       steps {
-        echo '📦 Archiving output.txt...'
         archiveArtifacts artifacts: 'output.txt'
       }
     }
   }
 
   post {
-    always {
-      echo '📧 Sending email...'
+    success {
       emailext(
-        to: "${RECIPIENT}",
-        subject: "Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
-        body: """\
-          <h3>Build ${currentBuild.currentResult}</h3>
-          <p>Project: ${JOB_NAME}</p>
-          <p>Build: #${BUILD_NUMBER}</p>
-          <p><a href="${BUILD_URL}">View Build</a></p>
-        """,
-        mimeType: 'text/html',
-        credentialsId: "${SMTP_CREDS}"
+        to: 'you@example.com',
+        subject: "Build #${BUILD_NUMBER} SUCCESS",
+        body: "The build was successful. See output.txt for results.",
+        attachLog: true
+      )
+    }
+    failure {
+      emailext(
+        to: 'you@example.com',
+        subject: "Build #${BUILD_NUMBER} FAILED",
+        body: "The build failed. Please check the console output.",
+        attachLog: true
       )
     }
   }
