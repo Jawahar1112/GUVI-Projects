@@ -12,7 +12,7 @@ pipeline {
     stage('Checkout') {
       steps {
         echo '🔄 Checking out code...'
-        git url: 'git@github.com:Jawahar1112/GUVI/tree/main/Jenkins-Task-02.git',  
+        git url: 'git@github.com:Jawahar1112/GUVI.git',  
             credentialsId: "${GIT_CREDS}"
       }
     }
