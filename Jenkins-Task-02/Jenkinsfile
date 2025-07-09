@@ -4,16 +4,20 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        echo '🏗️ Running build script...'
-        sh 'chmod +x build.sh'
-        sh './build.sh'
+        dir('Jenkins-Task-02') {
+          echo '🏗️ Running build script...'
+          sh 'chmod +x build.sh'
+          sh './build.sh'
+        }
       }
     }
 
     stage('Archive Output') {
       steps {
-        echo '📦 Archiving output.txt'
-        archiveArtifacts artifacts: 'output.txt', onlyIfSuccessful: true
+        dir('Jenkins-Task-02') {
+          echo '📦 Archiving output.txt'
+          archiveArtifacts artifacts: 'output.txt', onlyIfSuccessful: true
+        }
       }
     }
   }
@@ -23,7 +27,7 @@ pipeline {
       emailext(
         to: 'jawaharjawa1112@gmail.com',
         subject: "✅ Build #${BUILD_NUMBER} Successful",
-        body: "Jenkins build completed successfully.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
+        body: "Jenkins build completed successfully.",
         attachLog: true
       )
     }
@@ -31,7 +35,7 @@ pipeline {
       emailext(
         to: 'jawaharjawa1112@gmail.com',
         subject: "❌ Build #${BUILD_NUMBER} Failed",
-        body: "Jenkins build failed.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
+        body: "Jenkins build failed. Please check the console output.",
         attachLog: true
       )
     }
