@@ -1,11 +1,10 @@
-cat > Jenkinsfile << 'EOF'
 pipeline {
   agent any
 
   stages {
     stage('Build') {
       steps {
-        echo 'Running build.sh'
+        echo '🏗️ Running build script...'
         sh 'chmod +x build.sh'
         sh './build.sh'
       }
@@ -13,7 +12,8 @@ pipeline {
 
     stage('Archive Output') {
       steps {
-        archiveArtifacts artifacts: 'output.txt'
+        echo '📦 Archiving output.txt'
+        archiveArtifacts artifacts: 'output.txt', onlyIfSuccessful: true
       }
     }
   }
@@ -21,20 +21,19 @@ pipeline {
   post {
     success {
       emailext(
-        to: 'you@example.com',
-        subject: "Build #${BUILD_NUMBER} SUCCESS",
-        body: "The build was successful. See output.txt for results.",
+        to: 'jawaharjawa1112@gmail.com.com',
+        subject: "✅ Build #${BUILD_NUMBER} Successful",
+        body: "Jenkins build completed successfully.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
         attachLog: true
       )
     }
     failure {
       emailext(
-        to: 'you@example.com',
-        subject: "Build #${BUILD_NUMBER} FAILED",
-        body: "The build failed. Please check the console output.",
+        to: 'jawaharjawa1112@gmail.com.com',
+        subject: "❌ Build #${BUILD_NUMBER} Failed",
+        body: "Jenkins build failed.\nProject: ${JOB_NAME}\nBuild: #${BUILD_NUMBER}",
         attachLog: true
       )
     }
   }
 }
-EOF
