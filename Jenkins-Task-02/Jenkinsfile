@@ -1,0 +1,54 @@
+cat > Jenkinsfile << 'EOF'
+pipeline {
+  agent any
+
+  environment {
+    GIT_CREDS   = 'github-creds'       
+    SMTP_CREDS  = 'smtp-creds'         
+    RECIPIENT   = 'jawaharjawa1112@gmail.com'    
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo '🔄 Checking out code...'
+        git url: 'git@github.com:Jawahar1112/GUVI/tree/main/Jenkins-Task-02.git',  
+            credentialsId: "${GIT_CREDS}"
+      }
+    }
+
+    stage('Build') {
+      steps {
+        echo '⚙️ Running build.sh...'
+        sh 'chmod +x build.sh'
+        sh './build.sh'
+      }
+    }
+
+    stage('Archive') {
+      steps {
+        echo '📦 Archiving output.txt...'
+        archiveArtifacts artifacts: 'output.txt'
+      }
+    }
+  }
+
+  post {
+    always {
+      echo '📧 Sending email...'
+      emailext(
+        to: "${RECIPIENT}",
+        subject: "Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+        body: """\
+          <h3>Build ${currentBuild.currentResult}</h3>
+          <p>Project: ${JOB_NAME}</p>
+          <p>Build: #${BUILD_NUMBER}</p>
+          <p><a href="${BUILD_URL}">View Build</a></p>
+        """,
+        mimeType: 'text/html',
+        credentialsId: "${SMTP_CREDS}"
+      )
+    }
+  }
+}
+EOF
